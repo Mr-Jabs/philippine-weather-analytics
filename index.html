@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Philippine weather analytics. Explore current conditions, temperature trends, and rainfall across Philippine cities.">
+  <meta name="weather-api-base" content="http://127.0.0.1:8000/api/v1/">
+  <title>PH Weather — City overview</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <script defer src="script.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#overview">Skip to weather</a>
+  <main class="app-window">
+    <nav class="icon-rail" aria-label="Dashboard sections">
+      <a class="logo" href="#overview" aria-label="PH Weather home">P<span>°</span></a>
+      <div class="rail-menu">
+        <a class="rail-button active" href="#overview" aria-label="City overview" title="City overview"><svg><use href="#i-sun"/></svg></a>
+        <a class="rail-button" href="#trends" aria-label="Weather trends" title="Weather trends"><svg><use href="#i-chart"/></svg></a>
+        <a class="rail-button" href="#comparison" aria-label="Compare cities" title="Compare cities"><svg><use href="#i-grid"/></svg></a>
+      </div>
+      <span class="rail-footer">PH</span>
+    </nav>
+    <aside class="tree-sidebar" id="sidebar" aria-label="Workspace navigation">
+      <div class="workspace-brand">PH Weather<span class="brand-caption">A little perspective on the forecast.</span></div>
+      <div class="sidebar-label">YOUR WORKSPACE</div>
+      <a class="sidebar-link" href="#overview"><svg><use href="#i-grid"/></svg>Overview<span class="small-arrow">↗</span></a>
+      <div class="tree-heading"><span>Philippine cities</span><span id="city-count" class="count-pill">—</span></div>
+      <nav class="tree-children" id="city-navigation" aria-label="Select a city"><span class="nav-placeholder">Loading cities…</span></nav>
+      <div class="sidebar-label explore-label">EXPLORE</div>
+      <a class="sidebar-link muted" href="#trends"><svg><use href="#i-chart"/></svg>7-day trends</a>
+      <a class="sidebar-link muted" href="#comparison"><svg><use href="#i-compare"/></svg>City comparison</a>
+      <div class="sidebar-note"><span class="outline-dot"></span>One archipelago.<br>Many microclimates.<small>Open-Meteo · Model weather data</small></div>
+    </aside>
+    <div class="menu-backdrop" id="menu-backdrop" hidden></div>
+    <section class="workspace">
+      <header class="shell-header">
+        <button class="mobile-menu icon-button" id="mobile-menu" aria-label="Open city navigation" aria-controls="sidebar" aria-expanded="false"><svg><use href="#i-menu"/></svg></button>
+        <label class="search-box"><svg><use href="#i-search"/></svg><input id="city-search" type="search" placeholder="Find your city…" aria-label="Filter city tabs"><span class="search-hint">PH</span></label>
+        <span class="header-caption">WEATHER, WITH CONTEXT.</span>
+        <button class="refresh-button" id="refresh-button"><svg><use href="#i-refresh"/></svg><span>Refresh</span></button>
+      </header>
+      <div class="canvas">
+        <div class="toolbar">
+          <div class="city-tabs" id="city-tabs" role="group" aria-label="Quick city selection"><span class="loading-inline"><span class="spinner"></span>Finding your cities</span></div>
+          <span class="timezone-pill">PHT <span>UTC+8</span></span>
+        </div>
+        <div class="page-heading" id="overview">
+          <div><p class="eyebrow">PHILIPPINE WEATHER ANALYTICS</p><h1>City overview<span class="accent-period">.</span></h1></div>
+          <label class="city-select-label">Your location<select id="city-select" aria-label="Select city" disabled><option>Loading cities…</option></select></label>
+        </div>
+        <div class="connection-banner" id="connection-banner" role="status" aria-live="polite"><span class="spinner"></span><span id="connection-message">Connecting to your weather workspace…</span><button id="retry-button" hidden>Try again ↗</button></div>
+        <div class="report-grid">
+          <div class="main-column">
+            <section class="hero-section data-panel" id="current-panel" aria-label="Current weather" aria-busy="true">
+              <div class="hero-copy">
+                <div class="location-line"><span class="location-marker">⌖</span><span id="selected-city-label">Select a city</span><span class="weather-caption">LATEST AVAILABLE</span></div>
+                <div class="hero-number" id="temperature-value">—<span class="unit">°C</span></div>
+                <div class="hero-tags"><span class="delta" id="weather-status">Awaiting weather</span><span id="wind-value" class="wind-tag">Wind — km/h</span></div>
+                <p class="reading-time" id="reading-time">Hourly model conditions · Philippine time</p>
+                <p class="panel-feedback" id="current-feedback"><span class="spinner"></span>Loading latest readings</p>
+              </div>
+              <div class="kpi-grid">
+                <article class="kpi-card"><div class="kpi-top">Humidity <svg><use href="#i-drop"/></svg></div><div class="kpi-value" id="humidity-value">—<span>%</span></div><div class="kpi-footer">Relative humidity<span>2 m</span></div></article>
+                <article class="kpi-card inverted"><div class="kpi-top">Heat index <svg><use href="#i-sun"/></svg></div><div class="kpi-value" id="heat-value">—<span>°C</span></div><div class="kpi-footer">Feels like<span>In shade</span></div></article>
+                <article class="kpi-card"><div class="kpi-top">Rainfall <svg><use href="#i-rain"/></svg></div><div class="kpi-value" id="rain-value">—<span>mm</span></div><div class="kpi-footer">Precipitation<span>Hourly</span></div></article>
+              </div>
+            </section>
+            <section class="module trend-module data-panel" id="trends" aria-busy="true">
+              <div class="module-header"><div><p class="eyebrow">THE BIGGER PICTURE</p><h2>Weather through the week</h2></div><span class="period-pill">Last 7 days</span></div>
+              <div class="trend-toolbar"><p id="trend-description">Hourly temperature · °C</p><div class="segmented" role="group" aria-label="Trend metric"><button class="active" data-metric="temperature_c" aria-pressed="true">Temperature</button><button data-metric="precipitation_mm" aria-pressed="false">Rainfall</button><button data-metric="heat_index_c" aria-pressed="false">Heat index</button></div></div>
+              <div class="chart-container" id="trend-chart"><div class="chart-state"><span class="spinner"></span>Loading hourly trends</div></div>
+              <div class="chart-footer"><span><i class="legend-dot"></i><span id="trend-city">Selected city</span></span><span>Hourly · Asia/Manila</span><button class="text-button" id="toggle-table" aria-expanded="false" aria-controls="trend-table">View data ↗</button></div>
+              <div class="table-scroll" id="trend-table" hidden></div>
+            </section>
+            <section class="module comparison-module data-panel" id="comparison" aria-busy="true">
+              <div class="module-header"><div><p class="eyebrow">A VIEW ACROSS THE ISLANDS</p><h2>City temperature comparison</h2></div><span class="period-pill">7-day average</span></div>
+              <div class="comparison-chart" id="comparison-chart"><div class="chart-state"><span class="spinner"></span>Comparing cities</div></div>
+              <p class="module-footnote">Average of available hourly readings. Select a bar to explore a city.</p>
+            </section>
+          </div>
+          <aside class="right-column">
+            <section class="module cities-module data-panel" id="cities-panel" aria-busy="true">
+              <div class="module-header"><h2>Across the Philippines</h2><span class="live-label"><i class="legend-dot"></i>Latest</span></div>
+              <div id="city-readings"><div class="chart-state"><span class="spinner"></span>Loading city readings</div></div>
+              <p class="module-footnote">Latest stored hour per city. Times can differ.</p>
+            </section>
+            <section class="rainfall-module data-panel" id="rainfall-panel" aria-busy="true">
+              <div class="summary-card"><span class="vertical-label">Selected city · last 7 days</span><p>Rainfall, in perspective</p><strong id="rain-total">—<span> mm</span></strong><div class="summary-divider"></div><div class="summary-row"><span>Available hours<strong id="rain-hours">—</strong></span><span>Wet hours<strong id="wet-hours">—</strong></span></div><p id="rain-coverage">Coverage will appear when data is available.</p></div>
+              <div class="module daily-module"><div class="module-header"><h2>Daily rainfall</h2><span class="caption">mm</span></div><div id="rain-chart"><div class="chart-state"><span class="spinner"></span>Loading rainfall</div></div><p class="module-footnote">Hatched bars are partial days. Totals use available hours only.</p></div>
+            </section>
+            <section class="source-note"><span class="source-symbol">↗</span><div><h2>A forecast. Not a guess.</h2><p>Model data from Open-Meteo. Missing readings remain blank; refresh to retrieve the latest stored data.</p><a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">About the source ↗</a></div></section>
+          </aside>
+        </div>
+        <footer class="canvas-footer"><span>PH WEATHER / A CLEARER PICTURE</span><span id="last-refresh">Not yet connected</span></footer>
+      </div>
+    </section>
+  </main>
+  <noscript><p class="noscript">Enable JavaScript to load weather data from the local API.</p></noscript>
+  <svg class="svg-sprite" aria-hidden="true">
+    <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/></symbol>
+    <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 18V6m0 12h16M7 14l4-5 4 3 5-7"/></symbol>
+    <symbol id="i-grid" viewBox="0 0 24 24"><rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><rect x="14" y="14" width="6" height="6" rx="1"/></symbol>
+    <symbol id="i-compare" viewBox="0 0 24 24"><path d="M5 19V9m7 10V4m7 15v-7"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10" cy="10" r="6"/><path d="m15 15 5 5"/></symbol>
+    <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 8a8 8 0 1 0 .5 7M20 3v5h-5"/></symbol>
+    <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
+    <symbol id="i-drop" viewBox="0 0 24 24"><path d="M12 3C10 7 5 11 5 15a7 7 0 0 0 14 0c0-4-5-8-7-12z"/></symbol>
+    <symbol id="i-rain" viewBox="0 0 24 24"><path d="M7 15H6a4 4 0 0 1-1-8 6 6 0 0 1 11-1 4.5 4.5 0 0 1 2 9M8 18l-1 3m6-3-1 3m6-3-1 3"/></symbol>
+  </svg>
+</body>
+</html>
