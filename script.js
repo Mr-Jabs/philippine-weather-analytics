@@ -89,7 +89,8 @@
   if (typeof document === "undefined") return;
 
   const $ = id => document.getElementById(id);
-  const API = document.querySelector('meta[name="weather-api-base"]').content;
+  const API = document.querySelector('meta[name="weather-api-base"]')?.content ||
+    "https://philippine-weather-analytics.onrender.com/api/v1/";
   const state = { cities: [], city: null, metric: "temperature_c", latest: null, history: null,
     comparison: null, errors: {}, loading: true, sequence: 0, controller: null };
   const currentCity = () => state.cities.find(city => city.city_id === state.city);

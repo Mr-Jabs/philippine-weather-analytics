@@ -44,10 +44,10 @@ test('line charts break at missing values and absent hours', () => {
 
 test('requests use the configured API and reject error/invalid responses', async () => {
   let url;
-  const result = await fetchAPI('http://127.0.0.1:8000/api/v1/', 'cities', { fetchImpl: async input => {
+  const result = await fetchAPI('https://philippine-weather-analytics.onrender.com/api/v1/', 'cities', { fetchImpl: async input => {
     url = String(input); return { ok: true, json: async () => ({ data: [] }) };
   } });
-  assert.equal(url, 'http://127.0.0.1:8000/api/v1/cities');
+  assert.equal(url, 'https://philippine-weather-analytics.onrender.com/api/v1/cities');
   assert.deepEqual(result.data, []);
   await assert.rejects(fetchAPI('http://localhost/', 'cities', { fetchImpl: async () => ({ ok: false, status: 503 }) }), /database unavailable/);
   await assert.rejects(fetchAPI('http://localhost/', 'cities', { fetchImpl: async () => ({ ok: true, json: async () => ({ wrong: [] }) }) }), /Unexpected/);

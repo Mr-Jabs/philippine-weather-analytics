@@ -42,7 +42,7 @@ class Handler(SimpleHTTPRequestHandler):
             mode = parsed.path.strip("/")
             html = (ROOT / "index.html").read_text(encoding="utf-8")
             base = "http://127.0.0.1:4174/" + ((mode + "/") if mode else "") + "api/v1/"
-            html = html.replace("http://127.0.0.1:8000/api/v1/", base)
+            html = html.replace("https://philippine-weather-analytics.onrender.com/api/v1/", base)
             html = html.replace("<body>", '<body><div class="fixture-banner">BROWSER TEST FIXTURE · Sample data · ' + (mode or "populated") + '</div>')
             self.send_data(html.encode(), "text/html; charset=utf-8")
             return

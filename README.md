@@ -141,9 +141,10 @@ In a second terminal, from the same project root:
 .\.venv\Scripts\python -m http.server 4173 --bind 127.0.0.1
 ```
 
-Open [the weather dashboard](http://127.0.0.1:4173/). The frontend calls
-`http://127.0.0.1:8000/api/v1/`; change the `weather-api-base` meta tag in
-`index.html` for another API host. Stop servers with Ctrl+C.
+Open [the weather dashboard](http://127.0.0.1:4173/). The frontend defaults to
+`https://philippine-weather-analytics.onrender.com/api/v1/`. To use the local
+backend, set the `weather-api-base` meta tag in `index.html` to
+`http://127.0.0.1:8000/api/v1/`. Stop local servers with Ctrl+C.
 
 ## Database model
 
